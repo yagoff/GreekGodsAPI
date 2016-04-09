@@ -6,12 +6,14 @@ import scala.collection.mutable
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
+import com.typesafe.scalalogging.LazyLogging
+
 case class IdGenerator() {
   private val id = new AtomicLong
   def next: Long = id.incrementAndGet
 }
 
-class GodsController {
+class GodsController extends LazyLogging {
   //database
   var db = mutable.HashSet[God]()
 
@@ -19,6 +21,7 @@ class GodsController {
   def nextTaskId(): Long = idGenerator.next
 
   def addGod(god: God): God = {
+    logger.debug(s"God before adding id: $god")
     val godWithId = god.copy(id = Some(nextTaskId()))
     db += godWithId
     godWithId
