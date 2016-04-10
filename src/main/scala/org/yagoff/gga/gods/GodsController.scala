@@ -18,11 +18,11 @@ class GodsController extends LazyLogging {
   var db = mutable.HashSet[God]()
 
   private val idGenerator = IdGenerator()
-  def nextTaskId(): Long = idGenerator.next
+  def nextGodId(): Long = idGenerator.next
 
   def addGod(god: God): God = {
     logger.debug(s"God before adding id: $god")
-    val godWithId = god.copy(id = Some(nextTaskId()))
+    val godWithId = god.copy(id = Some(nextGodId()))
     db += godWithId
     godWithId
   }

@@ -13,7 +13,7 @@ trait AkkaJsonProtocol extends DefaultJsonProtocol {
 
 trait GodsRoutes extends AkkaJsonProtocol {
 
-  val godsController = new GodsController()
+  lazy val godsController = new GodsController()
 
   val routes =
     path("gods") {
