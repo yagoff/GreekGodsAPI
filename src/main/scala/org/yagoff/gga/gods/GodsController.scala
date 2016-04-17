@@ -1,47 +1,39 @@
 package org.yagoff.gga.gods
 
-import java.util.concurrent.atomic.AtomicLong
+import akka.actor.ActorSystem
 
-import scala.collection.mutable
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
-
+import scala.concurrent.{ExecutionContext, Future}
 import com.typesafe.scalalogging.LazyLogging
 
-case class IdGenerator() {
-  private val id = new AtomicLong
-  def next: Long = id.incrementAndGet
-}
 
 class GodsController extends LazyLogging {
-  //database
-  var db = mutable.HashSet[God]()
 
-  private val idGenerator = IdGenerator()
-  def nextGodId(): Long = idGenerator.next
+  implicit val system = ActorSystem("ctrl-system")
+  implicit lazy val ec = system.dispatcher
 
-  def addGod(god: God): God = {
+  lazy val godsDao = new GodsDao()(ec)
+
+  def addGod(god: God): Future[God] = {
     logger.debug(s"God before adding id: $god")
-    val godWithId = god.copy(id = Some(nextGodId()))
-    db += godWithId
-    godWithId
+    val godCreated = godsDao.create(god)
+    godCreated
   }
 
-  def getDB() = db
+//  def getDB() = db
 
-  def getGodById(id: Long): Future[God] = Future {
-    db.filter(_.id.get == id).head
-  }
-
-  def update(id: Long, updatedGod: God): Future[God] = Future {
-    val currentGod = db.filter(_.id.get == id).head
-    db -= currentGod
-    db += updatedGod
-    updatedGod
-  }
-
-  def delete(id: Long) = {
-    val god = db.filter(_.id.get == id).head
-    db -= god
-  }
+//  def getGodById(id: Long): Future[God] = Future {
+//    db.filter(_.id.get == id).head
+//  }
+//
+//  def update(id: Long, updatedGod: God): Future[God] = Future {
+//    val currentGod = db.filter(_.id.get == id).head
+//    db -= currentGod
+//    db += updatedGod
+//    updatedGod
+//  }
+//
+//  def delete(id: Long) = {
+//    val god = db.filter(_.id.get == id).head
+//    db -= god
+//  }
 }

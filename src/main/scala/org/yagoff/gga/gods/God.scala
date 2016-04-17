@@ -1,3 +1,5 @@
 package org.yagoff.gga.gods
 
-case class God(id: Option[Long], name: String, purposes: List[String])
+import java.util.UUID
+
+case class God(id: Option[UUID], name: String, purpose: String)
